@@ -4,6 +4,9 @@ description: "A new series on learning AI, from the ground up"
 date: 2026-06-06
 tags: ["ai", "unpacking-ai", "hardware"]
 canonicalURL: "https://www.pathtostaff.com/p/unpacking-ai-the-hardware-behind"
+cover:
+  image: "https://substackcdn.com/image/fetch/$s_!G-oW!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fffb797f2-d7e2-4976-84ab-b106c5cf220e_2400x1260.png"
+  alt: "Unpacking AI: The Hardware Behind AI"
 ---
 
 > *This was initially published on [Path to Staff](https://www.pathtostaff.com/p/unpacking-ai-the-hardware-behind), but I'm bringing it here as I start to write more about learning AI.*

@@ -4,6 +4,10 @@ description: "Learn what AI models are made of"
 date: 2026-06-20
 tags: ["ai", "unpacking-ai", "transformers"]
 canonicalURL: "https://www.pathtostaff.com/p/everything-a-senior-engineer-needs"
+cover:
+  image: "/images/inside-an-llm/part2-cover.png"
+  alt: "Unpacking AI Part Two: Data and Model Architecture"
+  hiddenInSingle: true
 ---
 
 > *This was initially published on [Path to Staff](https://www.pathtostaff.com/p/everything-a-senior-engineer-needs), but I'm bringing it here as I start to write more about learning AI.*
