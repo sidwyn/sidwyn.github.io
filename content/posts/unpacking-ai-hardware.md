@@ -6,6 +6,8 @@ tags: ["ai", "unpacking-ai", "hardware"]
 canonicalURL: "https://www.pathtostaff.com/p/unpacking-ai-the-hardware-behind"
 ---
 
+> *This was initially published on [Path to Staff](https://www.pathtostaff.com/p/unpacking-ai-the-hardware-behind), but I'm bringing it here as I start to write more about learning AI.*
+
 Welcome back to Path to Staff. I recently left Meta for personal reasons (not laid off!), and have found much more time to write. This means learning as much as I can and distilling what I learn into these articles. 
 
 Now back to the topic: As an engineer who never really interfaced much with AI, I realized I didn't know much about it at all. Since I’ve more time now, I've spent the past few weeks diving really deep to understand AI from the bottom up. And I want to share those learnings with you today. 

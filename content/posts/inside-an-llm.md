@@ -6,6 +6,8 @@ tags: ["ai", "unpacking-ai", "transformers"]
 canonicalURL: "https://www.pathtostaff.com/p/everything-a-senior-engineer-needs"
 ---
 
+> *This was initially published on [Path to Staff](https://www.pathtostaff.com/p/everything-a-senior-engineer-needs), but I'm bringing it here as I start to write more about learning AI.*
+
 Welcome back to Path to Staff! This series is a little different from our usual programming. In this series, we're covering LLMs and AI in-depth. 
 
 As an engineer, I never really had the time to understand AI's internals. But I've spent the past few weeks doing deep research to unpack it all.
