@@ -1,0 +1,43 @@
+baseURL: "https://sidwyn.com/"
+title: Sidwyn Writes
+theme: PaperMod
+
+params:
+  profileMode:
+    enabled: true
+    title: "👋 Hi, I'm Sidwyn"
+    subtitle: >
+      Engineer, writer, and angel investor. I've built products at Meta, Lyft, and GoFundMe,
+      and sold a startup along the way. I write about programming and technology here,
+      and about engineering career growth at [PathToStaff.com](https://pathtostaff.com).
+      Interested in working together? [Email me](mailto:sidwyn@gmail.com).
+    imageUrl: "https://substackcdn.com/image/fetch/$s_!kJcm!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F17301c61-d1ab-4324-9cab-340b73bb6a6d_2100x2100.jpeg"
+    imageTitle: "Sidwyn Koh"
+    imageWidth: 140
+    imageHeight: 140
+  ShowReadingTime: true
+  ShowShareButtons: false
+  socialIcons:
+    - name: github
+      url: "https://github.com/sidwyn"
+    - name: linkedin
+      url: "https://www.linkedin.com/in/sidwyn/"
+    - name: x
+      url: "https://x.com/sidwyn"
+    - name: email
+      url: "mailto:sidwyn@gmail.com"
+    - name: other
+      title: "Path to Staff"
+      url: "https://pathtostaff.com"
+
+menu:
+  main:
+    - name: Archive
+      url: /archives/
+      weight: 10
+    - name: Search
+      url: /search/
+      weight: 20
+    - name: Tags
+      url: /tags/
+      weight: 30
