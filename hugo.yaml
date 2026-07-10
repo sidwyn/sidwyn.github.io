@@ -18,9 +18,15 @@ params:
       style="border-radius: 50%; float: right; margin: 0 0 12px 16px;" />
       I've built products at Meta, Lyft, and GoFundMe, and [sold a startup](https://www.techinasia.com/asian-startup-schools-unite-taipeis-alpha-camp-acquires-singapores-pragmatic-lab) along the way. I write about programming and technology here,
       and about engineering career growth at [PathToStaff.com](https://pathtostaff.com).<br/><br/> I also angel invest in early-stage startups and advise founders on product & engineering. [Email me](mailto:sidwyn@gmail.com) if you're interested in working together.
-      <iframe src="https://sidwyn.substack.com/embed" width="100%" height="150"
-      style="max-width: 480px; border: none; background: transparent; margin-top: 10px;"
-      frameborder="0" scrolling="no"></iframe>
+      <form action="https://sidwyn.substack.com/api/v1/free?nojs=true" method="post"
+      target="_blank" style="margin-top: 14px; display: flex; gap: 8px; max-width: 420px;">
+      <input type="email" name="email" placeholder="Get new posts by email" required
+      style="flex: 1; min-width: 0; padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--code-bg); color: var(--primary); font-size: 14px;" />
+      <input type="submit" value="Subscribe"
+      style="padding: 9px 16px; border: none; border-radius: 6px; background: var(--primary);
+      color: var(--theme); cursor: pointer; font-weight: 500; font-size: 14px;" />
+      </form>
   ShowReadingTime: true
   ShowShareButtons: false
   socialIcons:
