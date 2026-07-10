@@ -1,0 +1,44 @@
+{{- with site.Params.homeInfoParams }}
+<article class="first-entry home-info">
+    <header class="entry-header">
+        <h1>{{ .Title | markdownify }}</h1>
+    </header>
+    <div class="entry-content md-content">
+        {{ $opts := dict "display" "block" }}
+        {{ .Content | $.Page.RenderString $opts }}
+    </div>
+    <footer class="entry-footer">
+        {{ partial "social_icons.html" (dict "align" site.Params.homeInfoParams.AlignSocialIconsTo) }}
+    </footer>
+</article>
+{{- end -}}
+
+{{- /* Latest posts from Substack, fetched at build time */ -}}
+{{- with try (resources.GetRemote "https://sidwyn.substack.com/feed") }}
+  {{- with .Err }}
+    {{- warnf "Substack feed unavailable: %s" . }}
+  {{- else with .Value }}
+    {{- $data := transform.Unmarshal .Content }}
+    {{- $items := $data.channel.item }}
+    {{- if $items }}
+      {{- if not (reflect.IsSlice $items) }}{{ $items = slice $items }}{{ end }}
+      <article class="first-entry home-info" style="margin-top: 24px;">
+        <header class="entry-header">
+            <h2>📬 Latest on my Substack</h2>
+        </header>
+        <div class="entry-content">
+            <ul style="list-style: none; padding: 0; margin: 10px 0 0;">
+            {{- range first 5 $items }}
+                <li style="margin-bottom: 10px;">
+                    <a href="{{ .link }}">{{ .title }}</a>
+                    <span style="color: var(--secondary); font-size: 14px;">
+                        &nbsp;·&nbsp;{{ dateFormat "Jan 2, 2006" (time.AsTime .pubDate) }}
+                    </span>
+                </li>
+            {{- end }}
+            </ul>
+        </div>
+      </article>
+    {{- end }}
+  {{- end }}
+{{- end }}

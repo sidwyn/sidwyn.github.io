@@ -20,7 +20,9 @@ params:
       and about engineering career growth at [PathToStaff.com](https://pathtostaff.com).<br/><br/> I also angel invest in early-stage startups and advise founders on product & engineering. [Email me](mailto:sidwyn@gmail.com) if you're interested in working together.
       <br/><br/>I also occasionally write technical posts, subscribe if you're interested:
       <form action="https://sidwyn.substack.com/api/v1/free?nojs=true" method="post"
-      target="_blank" style="margin-top: 16px; display: flex; gap: 10px; max-width: 460px;
+      target="ss-signup-frame"
+      onsubmit="var b=this.querySelector('input[type=submit]');setTimeout(function(){b.value='Subscribed ✓';b.disabled=true;},400);"
+      style="margin-top: 16px; display: flex; gap: 10px; max-width: 460px;
       padding: 6px; background: var(--entry); border: 1px solid var(--border); border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);">
       <input type="email" name="email" placeholder="your@email.com" required
@@ -30,6 +32,7 @@ params:
       style="padding: 11px 20px; border: none; border-radius: 7px; background: var(--primary);
       color: var(--theme); cursor: pointer; font-weight: 600; font-size: 15px; white-space: nowrap;" />
       </form>
+      <iframe name="ss-signup-frame" style="display: none;" title="signup"></iframe>
   ShowReadingTime: true
   ShowShareButtons: false
   socialIcons:
