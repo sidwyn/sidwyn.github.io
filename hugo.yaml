@@ -10,6 +10,9 @@ markup:
 params:
   assets:
     favicon: "/favicon.svg"
+    favicon16x16: "/favicon.svg"
+    favicon32x32: "/favicon.svg"
+    apple_touch_icon: "/favicon.svg"
   homeInfoParams:
     Title: "👋 Hi, I'm Sidwyn"
     Content: >
