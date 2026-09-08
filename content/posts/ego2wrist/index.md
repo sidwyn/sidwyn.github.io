@@ -20,9 +20,9 @@ Data is *scarce* in the robotics world. The way data is used today for most VLA 
 
 However, the underlying notion is still the same: useful data is scarce and important.
 
-As I read more about egocentric videos and policy training, I learned that **wristview videos provide a secondary viewpoint to help train policies better**. I started thinking: could we provide more useful data to policies without having to redo much work?
+As I read more about egocentric videos and policy training, I learned that **wristview videos provide a secondary viewpoint to help train policies better** ([Hsu et al., 2022](https://arxiv.org/abs/2203.12677)). I started thinking: could we provide more useful data to policies without having to redo much work?
 
-Scouring the internet led me to the [WARPED paper](https://arxiv.org/html/2604.10809v1). Though the paper's not been accepted yet, it did seem very promising, and I was keen on replicating parts with a minimal setup. This would also come with a few differences: I'd be using cheaper cameras (Arducams and my iPhone), a much smaller desk, and no roboarm.
+Scouring the internet led me to the [WARPED paper](https://arxiv.org/html/2604.10809v1). It wasn't the only route. [Kim, Wu and Finn](https://arxiv.org/abs/2307.05959) strapped a real camera to a human forearm and masked out the hand, and [WristWorld](https://arxiv.org/abs/2510.07313) generates wrist views from third-person robot footage with a video world model. WARPED was the one that started from a head camera, which is the camera I could actually wear. Though the paper's not been accepted yet, it did seem very promising, and I was keen on replicating parts with a minimal setup. This would also come with a few differences: I'd be using cheaper cameras (Arducams and my iPhone), a much smaller desk, and no roboarm.
 
 **So the question I set out to answer was a build question: can I take video from a camera on my head, and produce video from a camera that was never on my wrist?**
 
@@ -32,7 +32,7 @@ _Left: egocentric camera. Right: generated wrist video._
 
 
 
-Today, I'll share my process, [my code](https://github.com/sidwyn/ego2wrist), and lessons learned. Fair warning on the second half: I did eventually build an experiment to test the videos, and it did not resolve. Working out why took longer than building the pipeline did.
+Today, I'll share my process, [my code](https://github.com/sidwyn/ego2wrist), and lessons learned. Fair warning on the second half: I did eventually build an experiment to test the videos, and the answer was not the one I expected. Working out what it was actually telling me took longer than building the pipeline did.
 
 ---
 
@@ -256,6 +256,8 @@ Each policy predicted the next eight steps of gripper movement at 15 Hz, about h
 
 I also tested three baselines: repeating the last movement, guessing the average movement, and a policy with no camera.
 
+My first run trained each policy for 2,000 steps, once each:
+
 | Policy or baseline            | Mean error  |
 | ----------------------------- | ----------- |
 | Repeat my last move           | **3.72 mm** |
@@ -265,43 +267,62 @@ I also tested three baselines: repeating the last movement, guessing the average
 | **B** Head + rendered wrist   | 5.70 mm     |
 | **C** Head + real wrist       | 5.50 mm     |
 
-The real wrist camera improved error by **0.11 mm**. The rendered wrist made it **0.09 mm worse**.
+The real wrist camera improved error by **0.11 mm**. The rendered wrist made it **0.09 mm worse**. That looked like a finding, until I looked at how much a single run bounced from one checkpoint to the next: about 1 mm, ten times the differences I was trying to read. Every curve was also still falling when I stopped it. So I couldn't say whether the ordering was real or luck.
 
-<u>TODO HERE: TEST WITH 10K STEPS TO SEE IF IT IMPROVES</u>
+So I ran it again, properly this time. Ten thousand steps instead of two thousand. A learning rate that decays to zero instead of staying flat. And five random seeds per policy instead of one, so I could see how much the number moves when nothing changes but the dice. Fifteen training runs on five rented 4090s, about four hours wall clock, $14.47. I wrote the decision rule down before the first pod started: a difference counts only if its mean clears twice its standard error and the sign agrees on at least four of the five seeds.
 
-<u></u>I had also planned to measure how much of the real camera’s benefit the render recovered:
+| Policy                        | s1   | s2   | s3   | s4   | s5   | Mean        | sd   |
+| ----------------------------- | ---- | ---- | ---- | ---- | ---- | ----------- | ---- |
+| Repeat my last move           |      |      |      |      |      | **3.72 mm** |      |
+| **A** Head camera             | 3.64 | 3.74 | 3.65 | 3.78 | 3.81 | **3.72 mm** | 0.08 |
+| **B** Head + rendered wrist   | 3.90 | 3.86 | 3.86 | 3.80 | 3.75 | **3.84 mm** | 0.06 |
+| **C** Head + real wrist       | 3.77 | 3.68 | 3.72 | 3.70 | 3.61 | **3.70 mm** | 0.06 |
+
+And the differences, seed by seed, since each seed's three policies share the same data order and the same hardware:
+
+| Question                              | Difference | Mean     | Same sign | Verdict         |
+| ------------------------------------- | ---------- | -------- | --------- | --------------- |
+| Does the real wrist camera help?      | A − C      | +0.03 mm | 3 of 5    | not established |
+| Does the rendered wrist hurt?         | A − B      | −0.11 mm | 4 of 5    | not established |
+| Real wrist against rendered wrist     | C − B      | −0.14 mm | 5 of 5    | established     |
+
+Three things came out of that table.
+
+**The real wrist camera added nothing.** A minus C is 0.03 mm, and the sign flips from seed to seed. In the first run I could say the effect was too small to see through the noise. Now the noise is twelve times smaller and the effect is still zero. So the recovery fraction I'd planned to report has no denominator:
 
 ```
 recovery = (A error - B error) / (A error - C error)
 ```
 
-A recovery of 1 would mean the render matched the real camera’s improvement. However every run was still improving when I stopped it. Without repeated runs, I don’t know how reliable these differences are, so I’m not interpreting the recovery number.
+There was never a gap for the render to close. I'm not reporting a recovery number, and this time it's for a better reason than "I can't tell."
 
-**This experiment didn’t establish a reliable real-wrist advantage for the render to recover. That isn’t the same as showing that wrist views don’t help.**
+**The real wrist view beats the rendered one, by 0.14 mm, on every seed.** That is the only established result in the experiment. It's a measurable difference between two things that each add nothing over the head camera alone, so I'm recording it rather than celebrating it. The likeliest cause was flagged before any of these runs started: after normalisation, the rendered wrist frames sit much further from the ImageNet statistics the encoder expects than the real wrist frames do. A geometry problem would look different, so my guess is colour, not camera placement.
 
-Although this experiment didn't establish an advantage for wrist views, I did notice a couple of facts:
+**Training length mattered more than any camera.** The head-camera policy went from 5.61 mm to 3.72 mm with nothing changed except more steps and a decaying learning rate. That's 1.9 mm, about nine times the entire spread between the three cameras. It also caught up with "repeat my last move", which had beaten every policy by 1.8 mm in the first run. The real-wrist policy now edges below that rule on four of five seeds. I had written that a dumb rule beats a neural network on this task, and at 2,000 steps it did. At 10,000 steps it's a draw.
 
-1. **Pretraining made the biggest observed difference.** When I switched the head-camera encoder from random weights to [R3M](https://arxiv.org/abs/2203.12601), pretrained on egocentric video, this reduced error from **6.56 to 5.61 mm**. This was a **0.95 mm improvement**. Before that, it barely outperformed the no-camera policy at 6.63 mm.
+The five seeds earned their money on the way, too. After three seeds, A minus B read −0.20 mm with all three agreeing, and it cleared the threshold twice over. Seeds four and five came in at −0.02 and +0.06 and the effect fell apart. With three seeds I would have published "the render hurts by 0.2 mm."
 
-2. **Repeating the last move still beat everything**. The awkward result is the top row: **3.72 mm** for repeating the previous movement, versus **5.50 mm** for my best policy. My guess is that lifting a cube on an empty desk is easily repeatable as a move, whereas perhaps pouring a cup of coffee, or wiping a dirty plate might prove more challenging without repeated moves.
+One earlier result still stands. Before any of this, switching the head-camera encoder from random weights to [R3M](https://arxiv.org/abs/2203.12601), pretrained on egocentric video, reduced error from **6.56 to 5.61 mm** at 2,000 steps. Before that swap, the head camera barely beat the no-camera policy at 6.63 mm.
 
-Thus far, the training investigation cost about $3.20 and four hours of rented GPU time, with stop rules that ended two stages early.
+In total the training investigation cost about $18 and 24 hours of rented GPU time.
 
 ## What I'd do differently next time
 
 After two weeks of building, I know how to transform egocentric to wrist views, but there's much more work to be done to translate this to be useful for a policy. Here's what I'd do differently in the future:
 
-1. **Measure task success instead of millimeters.** This would have helped me understand my results much better. 
+1. **Train to convergence before comparing anything.** My first comparison was made at 2,000 steps with a flat learning rate, and every difference in it was smaller than the bounce inside one run. Ten thousand steps, a cosine schedule and five seeds turned a 1 mm noise floor into 0.07 mm. Do that first, then compare cameras.
 
-2. **Pick a task that actually needs a wrist view.** As mentioned above, lifting a cube on an empty desk may be solvable from the head camera alone. If I want to detect a wrist-view effect, I need a task where losing the wrist view actually hurts.
+2. **Measure task success instead of millimeters.** This would have helped me understand my results much better. 
 
-3. **Fix the camera geometry before running anything.** My real camera sat on my bicep at 45 cm because my Arducam wasn't wide angle. The rendered one sat at the standard 25 cm. So B against C was partly comparing two camera positions, not two ways of making an image. A fisheye lens at the right distance would remove that entirely. Something like [this](https://www.amazon.com/Arducam-Computer-Fisheye-Microphone-Windows/dp/B07ZS75KZR) would probably work.
+3. **Pick a task that actually needs a wrist view.** As mentioned above, lifting a cube on an empty desk may be solvable from the head camera alone. If I want to detect a wrist-view effect, I need a task where losing the wrist view actually hurts.
 
-4. **Try other pretrained encoders, since that's where the signal was.** R3M produced the largest change I saw, so I'd push on it. [VIP](https://arxiv.org/abs/2210.00030) is the obvious next one: a ResNet50 trained on the same Ego4D footage with a completely different training objective, so it separates "egocentric video helps" from "R3M's specific method helps". ImageNet ResNet50 as the control tells me whether I'm measuring pretraining or just capacity. CLIP ViT-B/16 is what WARPED actually used, and that's a transformer, not a ResNet, so it won't drop into my harness at all without custom encoder code.
+4. **Fix the camera geometry before running anything.** My real camera sat on my bicep at 45 cm because my Arducam wasn't wide angle. The rendered one sat at the standard 25 cm. So B against C was partly comparing two camera positions, not two ways of making an image. A fisheye lens at the right distance would remove that entirely. Something like [this](https://www.amazon.com/Arducam-Computer-Fisheye-Microphone-Windows/dp/B07ZS75KZR) would probably work.
 
-5. **Augment the rendered demos, since that's the whole point of rendering.** WARPED turns 30 demos into 300 by re-rendering each one with the object moved, retextured, and the camera perturbed. I rendered each demo exactly once since I didn't want to spend more time than I had already.
+5. **Try other pretrained encoders.** R3M produced the largest change I saw short of training longer, so I'd push on it. [VIP](https://arxiv.org/abs/2210.00030) is the obvious next one: a ResNet50 trained on the same Ego4D footage with a completely different training objective, so it separates "egocentric video helps" from "R3M's specific method helps". ImageNet ResNet50 as the control tells me whether I'm measuring pretraining or just capacity. CLIP ViT-B/16 is what WARPED actually used, and that's a transformer, not a ResNet, so it won't drop into my harness at all without custom encoder code.
 
-6. **A different policy (e.g. pretrained VLAs) is perhaps worth a look.** I used a diffusion policy because WARPED did. ACT is cheaper to train and might separate the arms differently. Fine-tuning a pretrained VLA instead of training a policy from scratch is the direction the field is actually going. Some options here are [SmolVLA](https://huggingface.co/lerobot/smolvla_base), which already lives inside lerobot so it would drop into my harness with the least work, and then also [π0](https://github.com/Physical-Intelligence/openpi) through openpi, and [OpenVLA](https://openvla.github.io/).
+6. **Augment the rendered demos, since that's the whole point of rendering.** WARPED turns 30 demos into 300 by re-rendering each one with the object moved, retextured, and the camera perturbed. I rendered each demo exactly once since I didn't want to spend more time than I had already.
+
+7. **A different policy (e.g. pretrained VLAs) is perhaps worth a look.** I used a diffusion policy because WARPED did. ACT is cheaper to train and might separate the arms differently. Fine-tuning a pretrained VLA instead of training a policy from scratch is the direction the field is actually going, and [Ego-Pi](https://arxiv.org/abs/2606.08107) fine-tunes one on egocentric human data directly. Some options here are [SmolVLA](https://huggingface.co/lerobot/smolvla_base), which already lives inside lerobot so it would drop into my harness with the least work, and then also [π0](https://github.com/Physical-Intelligence/openpi) through openpi, and [OpenVLA](https://openvla.github.io/).
 
  
 
@@ -310,6 +331,14 @@ All in all this was a really fun experiment. I learned a ton: WiLoR, DINO, Gauss
 ## References
 
 - Freeman, H. et al. _WARPED: Wrist-Aligned Rendering for Robot Policy Learning from Egocentric Human Demonstrations._ arXiv:2604.10809. [arXiv](https://arxiv.org/abs/2604.10809) · [author's PDF](https://harrynvfreeman.com/data/warped.pdf)
+
+- Hsu, K., Kim, M. J., Rafailov, R., Wu, J. and Finn, C. _Vision-Based Manipulators Need to Also See from Their Hands._ ICLR 2022. arXiv:2203.12677. [arXiv](https://arxiv.org/abs/2203.12677). Why a wrist view is worth having at all.
+
+- Kim, M. J., Wu, J. and Finn, C. _Giving Robots a Hand: Learning Generalizable Manipulation with Eye-in-Hand Human Video Demonstrations._ arXiv:2307.05959. [arXiv](https://arxiv.org/abs/2307.05959). A real camera on a human forearm, the route I did not take.
+
+- Qian, Z. et al. _WristWorld: Generating Wrist-Views via 4D World Models for Robotic Manipulation._ arXiv:2510.07313. [arXiv](https://arxiv.org/abs/2510.07313). Generated wrist views from third-person robot video.
+
+- Kim, J. W. et al. _Ego-Pi: VLA Fine-Tuning for Ego-Centric Human and Robot Data._ arXiv:2606.08107. [arXiv](https://arxiv.org/abs/2606.08107).
 
 - Mandlekar, A. et al. _What Matters in Learning from Offline Human Demonstrations for Robot Manipulation._ CoRL 2021. arXiv:2108.03298. [arXiv](https://arxiv.org/abs/2108.03298) · [robomimic study](https://robomimic.github.io/study/). The source of the wrist-camera success-rate numbers I quote.
 
