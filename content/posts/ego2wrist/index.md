@@ -294,13 +294,13 @@ Three things came out of that table.
 recovery = (A error - B error) / (A error - C error)
 ```
 
-There was never a gap for the render to close. I'm not reporting a recovery number, and this time it's for a better reason than "I can't tell."
+That denominator is the gap the real wrist camera was supposed to open, and it's zero. There's nothing for the render to recover a fraction of. I'm still not reporting a recovery number, but the reason is better than last time: the first run couldn't separate the effect from the noise, and this one shows there's no effect.
 
 **The real wrist view beats the rendered one, by 0.14 mm, on every seed.** That is the only established result in the experiment. It's a measurable difference between two things that each add nothing over the head camera alone, so I'm recording it rather than celebrating it. The likeliest cause was flagged before any of these runs started: after normalisation, the rendered wrist frames sit much further from the ImageNet statistics the encoder expects than the real wrist frames do. A geometry problem would look different, so my guess is colour, not camera placement.
 
 **Training length mattered more than any camera.** The head-camera policy went from 5.61 mm to 3.72 mm with nothing changed except more steps and a decaying learning rate. That's 1.9 mm, about nine times the entire spread between the three cameras. It also caught up with "repeat my last move", which had beaten every policy by 1.8 mm in the first run. The real-wrist policy now edges below that rule on four of five seeds. I had written that a dumb rule beats a neural network on this task, and at 2,000 steps it did. At 10,000 steps it's a draw.
 
-The five seeds earned their money on the way, too. After three seeds, A minus B read −0.20 mm with all three agreeing, and it cleared the threshold twice over. Seeds four and five came in at −0.02 and +0.06 and the effect fell apart. With three seeds I would have published "the render hurts by 0.2 mm."
+Running five seeds instead of three changed the answer. After three seeds, A minus B read −0.20 mm with all three agreeing, and it cleared the threshold twice over. Seeds four and five came in at −0.02 and +0.06 and the effect fell apart. With three seeds I would have published "the render hurts by 0.2 mm."
 
 One earlier result still stands. Before any of this, switching the head-camera encoder from random weights to [R3M](https://arxiv.org/abs/2203.12601), pretrained on egocentric video, reduced error from **6.56 to 5.61 mm** at 2,000 steps. Before that swap, the head camera barely beat the no-camera policy at 6.63 mm.
 
