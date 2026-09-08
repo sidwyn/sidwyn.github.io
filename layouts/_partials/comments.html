@@ -2,6 +2,11 @@
        Announcements category, so only the giscus app opens threads; readers
        reply to them. Injected from script so the first paint already matches
        the reader's theme, then kept in step with the PaperMod theme toggle. */ -}}
+<style>
+  /* Clear the fixed back-to-top button, which otherwise sits on the
+     sign-in button once the reader scrolls to the foot of the page. */
+  .giscus { margin-bottom: 3rem; }
+</style>
 <script>
   (function () {
     var mount = document.currentScript.parentNode;
