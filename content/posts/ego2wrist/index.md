@@ -26,10 +26,8 @@ Scouring the internet led me to the [WARPED paper](https://arxiv.org/html/2604.1
 
 **So the question I set out to answer was a build question: can I take video from a camera on my head, and produce video from a camera that was never on my wrist?**
 
-That is most of what this post is about. Whether the result is any _good_ came later, and it turned into a second project that I did not plan for.
 
-![What I filmed on my head, and the wrist video my pipeline generated from it.](fig_hero_ego_vs_wrist.jpg)
-<video src="clip_side_by_side_demo3.mp4" controls loop muted playsinline width="100%"></video>
+<video preload="metadata" src="clip_side_by_side_demo3.mp4" controls muted playsinline width="100%"></video>
 _Left: egocentric camera. Right: generated wrist video._
 
 
@@ -70,7 +68,7 @@ I then filmed two things:
 1. **A complete scan of the room.** I spent about 4 minutes filming this scan from a variety of angles, from both far away (1.5m) and close up (15cm close.).
 
 ![Eight moments from the room scan, wide pass on top and close passes below.](fig_scan_filmstrip.jpg)
-<video src="clip_scan.mp4" controls loop muted playsinline width="100%"></video>
+<video preload="metadata" src="clip_scan.mp4" controls muted playsinline width="100%"></video>
 
 _Samples from my room scan. Lighting is slightly different here, which is another problem I had to control for._
 
@@ -78,7 +76,7 @@ _Samples from my room scan. Lighting is slightly different here, which is anothe
    I filmed 60 takes across 6 sessions (10 takes per session), knowing that I would lose some to the pipeline. I used whistles to sync the clocks between both the wrist and ego cams. If I'd filmed each individual take separately, this would have taken exponentially more time.
 
 ![Six moments from one continuous recording block.](fig_demo_filmstrip.jpg)
-<video src="clip_demo.mp4" controls loop muted playsinline width="100%"></video>
+<video preload="metadata" src="clip_demo.mp4" controls muted playsinline width="100%"></video>
 
 ## Rendering pipeline
 
@@ -114,7 +112,7 @@ _Stage 4. WiLoR's 21 hand landmarks in orange, SAM 2's per-pixel object mask is 
 ![The finished wrist view: the splat rendered through the virtual wrist camera, with the gripper and object composited in.](fig_wrist_render.jpg)
 _The finished wrist view: splat rendered through the virtual wrist camera, with the gripper and object composited in. Again, was running into some lighting issues here, but we managed to figure it out at the end._
 
-<video src="hero_reach_to_grasp.mp4" autoplay loop muted playsinline width="100%" aria-label="A full reach-to-grasp, rendered."></video>
+<video preload="metadata" src="hero_reach_to_grasp.mp4" controls muted playsinline width="100%" aria-label="A full reach-to-grasp, rendered."></video>
 
 ## What building this process taught me
 
@@ -215,10 +213,10 @@ And so back to the bare desk I went. There were fewer keypoints to match this ti
 
 Now I had the generated videos. Were they actually any good? Let's take a look at a few of them.
 
-<video src="render_demo3.mp4" controls loop muted playsinline width="100%"></video>
+<video preload="metadata" src="render_demo3.mp4" controls muted playsinline width="100%"></video>
 _One of the renders. Hey, not bad! We see it moving from right to left._
 
-<video src="render_demo5.mp4" controls loop muted playsinline width="100%"></video>
+<video preload="metadata" src="render_demo5.mp4" controls muted playsinline width="100%"></video>
 
 _OK, maybe not that great. The cube has flown away. But the splat is still pretty good._
 
@@ -283,7 +281,7 @@ A recovery of 1 would mean the render matched the real camera’s improvement. H
 
 Although this experiment didn't establish an advantage for wrist views, I did notice a couple of facts:
 
-1. **Pretraining made the biggest observed difference.** When I switched the head-camera encoder from random weights to R3M, pretrained on egocentric video, this reduced error from **6.56 to 5.61 mm**. This was a **0.95 mm improvement**. Before that, it barely outperformed the no-camera policy at 6.63 mm.
+1. **Pretraining made the biggest observed difference.** When I switched the head-camera encoder from random weights to [R3M](https://arxiv.org/abs/2203.12601), pretrained on egocentric video, this reduced error from **6.56 to 5.61 mm**. This was a **0.95 mm improvement**. Before that, it barely outperformed the no-camera policy at 6.63 mm.
 
 2. **Repeating the last move still beat everything**. The awkward result is the top row: **3.72 mm** for repeating the previous movement, versus **5.50 mm** for my best policy. My guess is that lifting a cube on an empty desk is easily repeatable as a move, whereas perhaps pouring a cup of coffee, or wiping a dirty plate might prove more challenging without repeated moves.
 
@@ -299,7 +297,7 @@ After two weeks of building, I know how to transform egocentric to wrist views, 
 
 3. **Fix the camera geometry before running anything.** My real camera sat on my bicep at 45 cm because my Arducam wasn't wide angle. The rendered one sat at the standard 25 cm. So B against C was partly comparing two camera positions, not two ways of making an image. A fisheye lens at the right distance would remove that entirely. Something like [this](https://www.amazon.com/Arducam-Computer-Fisheye-Microphone-Windows/dp/B07ZS75KZR) would probably work.
 
-4. **Try other pretrained encoders, since that's where the signal was.** R3M produced the largest change I saw, so I'd push on it. VIP is the obvious next one: a ResNet50 trained on the same Ego4D footage with a completely different training objective, so it separates "egocentric video helps" from "R3M's specific method helps". ImageNet ResNet50 as the control tells me whether I'm measuring pretraining or just capacity. CLIP ViT-B/16 is what WARPED actually used, and that's a transformer, not a ResNet, so it won't drop into my harness at all without custom encoder code.
+4. **Try other pretrained encoders, since that's where the signal was.** R3M produced the largest change I saw, so I'd push on it. [VIP](https://arxiv.org/abs/2210.00030) is the obvious next one: a ResNet50 trained on the same Ego4D footage with a completely different training objective, so it separates "egocentric video helps" from "R3M's specific method helps". ImageNet ResNet50 as the control tells me whether I'm measuring pretraining or just capacity. CLIP ViT-B/16 is what WARPED actually used, and that's a transformer, not a ResNet, so it won't drop into my harness at all without custom encoder code.
 
 5. **Augment the rendered demos, since that's the whole point of rendering.** WARPED turns 30 demos into 300 by re-rendering each one with the object moved, retextured, and the camera perturbed. I rendered each demo exactly once since I didn't want to spend more time than I had already.
 
@@ -335,6 +333,10 @@ All in all this was a really fun experiment. I learned a ton: WiLoR, DINO, Gauss
 
 - Yang, L. et al. _Depth Anything V2._ arXiv:2406.09414. [arXiv](https://arxiv.org/abs/2406.09414) · [code](https://github.com/DepthAnything/Depth-Anything-V2)
 
+- Nair, S., Rajeswaran, A., Kumar, V., Finn, C. and Gupta, A. _R3M: A Universal Visual Representation for Robot Manipulation._ CoRL 2022. arXiv:2203.12601. [arXiv](https://arxiv.org/abs/2203.12601) · [code](https://github.com/facebookresearch/r3m). The pretrained encoder that produced the largest change I measured.
+
+- Ma, Y. J. et al. _VIP: Towards Universal Visual Reward and Representation via Value-Implicit Pre-Training._ ICLR 2023. arXiv:2210.00030. [arXiv](https://arxiv.org/abs/2210.00030) · [code](https://github.com/facebookresearch/vip). The encoder I would try next.
+
 - Chi, C. et al. _Diffusion Policy: Visuomotor Policy Learning via Action Diffusion._ RSS 2023. arXiv:2303.04137. [arXiv](https://arxiv.org/abs/2303.04137) · [project site](https://diffusion-policy.cs.columbia.edu/). The policy I trained.
 
 - Chi, C. et al. _Universal Manipulation Interface: In-The-Wild Robot Teaching Without In-The-Wild Robots._ RSS 2024. arXiv:2402.10329. [arXiv](https://arxiv.org/abs/2402.10329) · [project site](https://umi-gripper.github.io/). Where the 0.25 m camera standoff comes from.
@@ -342,3 +344,36 @@ All in all this was a really fun experiment. I learned a ton: WiLoR, DINO, Gauss
 - [LeRobot](https://github.com/huggingface/lerobot), Hugging Face. The dataset format and the policy training.
 
 - [gsplat](https://github.com/nerfstudio-project/gsplat), Nerfstudio. The CUDA splat trainer and rasteriser.
+
+
+<script>
+(function () {
+  var vids = document.querySelectorAll(".post-content video");
+  if (!vids.length || !("IntersectionObserver" in window)) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  function inView(v) {
+    var r = v.getBoundingClientRect();
+    return r.top < window.innerHeight && r.bottom > 0;
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      var v = e.target;
+      if (!e.isIntersecting) { v.pause(); return; }
+      if (v.dataset.held || v.ended) return;
+      var p = v.play();
+      if (p) p.catch(function () {});
+    });
+  }, { threshold: 0.25 });
+
+  vids.forEach(function (v) {
+    v.addEventListener("pause", function () {
+      // Only a pause the reader asked for counts; ours happens off screen.
+      if (!v.ended && inView(v)) v.dataset.held = "1";
+    });
+    v.addEventListener("play", function () { delete v.dataset.held; });
+    io.observe(v);
+  });
+})();
+</script>
