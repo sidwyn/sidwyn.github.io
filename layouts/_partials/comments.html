@@ -1,0 +1,53 @@
+{{- /* Comments, via giscus. Each post maps to a GitHub Discussion in the
+       Announcements category, so only the giscus app opens threads; readers
+       reply to them. Injected from script so the first paint already matches
+       the reader's theme, then kept in step with the PaperMod theme toggle. */ -}}
+<script>
+  (function () {
+    var mount = document.currentScript.parentNode;
+
+    function theme() {
+      return document.documentElement.dataset.theme === "dark"
+        ? "dark_dimmed"
+        : "light";
+    }
+
+    var s = document.createElement("script");
+    s.src = "https://giscus.app/client.js";
+    s.async = true;
+    s.crossOrigin = "anonymous";
+    var conf = {
+      "data-repo": "sidwyn/sidwyn.github.io",
+      "data-repo-id": "R_kgDOTTpSow",
+      "data-category": "Announcements",
+      "data-category-id": "DIC_kwDOTTpSo84DFLE4",
+      "data-mapping": "pathname",
+      "data-strict": "1",
+      "data-reactions-enabled": "1",
+      "data-emit-metadata": "0",
+      "data-input-position": "bottom",
+      "data-lang": "en",
+      "data-loading": "lazy",
+      "data-theme": theme()
+    };
+    Object.keys(conf).forEach(function (k) { s.setAttribute(k, conf[k]); });
+    mount.appendChild(s);
+
+    // The toggle rewrites html[data-theme]; pass the change into the iframe.
+    new MutationObserver(function () {
+      var f = document.querySelector("iframe.giscus-frame");
+      if (!f) return;
+      f.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: theme() } } },
+        "https://giscus.app"
+      );
+    }).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"]
+    });
+  })();
+</script>
+<noscript>
+  <p>Comments need JavaScript. You can also reply on
+    <a href="https://github.com/sidwyn/sidwyn.github.io/discussions">GitHub Discussions</a>.</p>
+</noscript>

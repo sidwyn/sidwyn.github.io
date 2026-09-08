@@ -8,6 +8,7 @@ markup:
       unsafe: true
 
 params:
+  comments: true
   assets:
     favicon: "/favicon.svg"
     favicon16x16: "/favicon.svg"
