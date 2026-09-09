@@ -288,11 +288,11 @@ That also means the number I originally set out to measure doesn't exist. I'd pl
 recovery = (A error - B error) / (A error - C error)
 ```
 
-So the fraction has nothing to divide by. The real camera never beat the head camera, so there was no gap for the render to close. I'm not reporting a recovery number, because there isn't one.
+Thus the fraction has nothing to divide by. The real camera never beat the head camera, so there was no gap for the render to close. I'm not reporting a recovery number, because there isn't one.
 
-**Does the rendered wrist hurt?** Probably a little, but not enough for me to say so. Four of the five seeds say yes, and the average is 0.11 mm worse, but my rule needs the sign to agree on all but one seed, and this one misses. So it stays "not established".
+**Does the rendered wrist hurt?** Probably a little, but not enough for me to say so. Four of the five seeds say yes, and the average is 0.11 mm worse. However, my rule needs the sign to agree on all but one seed, and this one misses. So it stays "not established".
 
-**Is the real wrist better than the rendered one?** Yes, by 0.14 mm, on every single seed. This is the only established result in the whole experiment. Before you get excited, remember that neither of them beats the head camera alone. It's a real difference between two things that both add nothing.
+**Is the real wrist better than the rendered one?** Yes, by 0.14 mm, on every single seed. This is the only established result in the whole experiment. However, before you get excited, remember that neither of them beats the head camera alone. It's a real difference between two things that both add nothing.
 
 Why is the render worse? I don't know for sure. My best guess is colour, not geometry. After normalisation, the rendered wrist frames sit much further from the ImageNet statistics my encoder expects than the real wrist frames do, and that was flagged before the runs started. A camera placement problem would look different from this.
 
@@ -314,13 +314,13 @@ After two weeks of building, I know how to transform egocentric to wrist views, 
 
 4. **Fix the camera geometry before running anything.** My real camera sat on my bicep at 45 cm because my Arducam wasn't wide angle. The rendered one sat at the standard 25 cm. So B against C was partly comparing two camera positions, not two ways of making an image. A fisheye lens at the right distance would remove that entirely. Something like [this](https://www.amazon.com/Arducam-Computer-Fisheye-Microphone-Windows/dp/B07ZS75KZR) would probably work.
 
-5. **Try other pretrained encoders.** R3M produced the largest change I saw short of training longer, so I'd push on it. [VIP](https://arxiv.org/abs/2210.00030) is the obvious next one: a ResNet50 trained on the same Ego4D footage with a completely different training objective, so it separates "egocentric video helps" from "R3M's specific method helps". ImageNet ResNet50 as the control tells me whether I'm measuring pretraining or just capacity. CLIP ViT-B/16 is what WARPED actually used, and that's a transformer, not a ResNet, so it won't drop into my harness at all without custom encoder code.
+5. **Try other pretrained encoders.** R3M produced the largest change I saw short of training longer, so I'd push on it. [VIP](https://arxiv.org/abs/2210.00030) is the obvious next one: a [ResNet50](https://arxiv.org/abs/1512.03385) trained on the same Ego4D footage with a completely different training objective, so it separates "egocentric video helps" from "R3M's specific method helps". [ImageNet](https://www.image-net.org/) ResNet50 as the control tells me whether I'm measuring pretraining or just capacity. CLIP ViT-B/16 is what [WARPED](https://arxiv.org/html/2604.10809v1) actually used, and that's a transformer, not a ResNet, so it won't drop into my harness at all without custom encoder code.
 
 6. **Augment the rendered demos, since that's the whole point of rendering.** WARPED turns 30 demos into 300 by re-rendering each one with the object moved, retextured, and the camera perturbed. I rendered each demo exactly once since I didn't want to spend more time than I had already.
 
 7. **A different policy (e.g. pretrained VLAs) is perhaps worth a look.** I used a diffusion policy because WARPED did. ACT is cheaper to train and might separate the arms differently. Fine-tuning a pretrained VLA instead of training a policy from scratch is the direction the field is actually going, and [Ego-Pi](https://arxiv.org/abs/2606.08107) fine-tunes one on egocentric human data directly. Some options here are [SmolVLA](https://huggingface.co/lerobot/smolvla_base), which already lives inside lerobot so it would drop into my harness with the least work, and then also [π0](https://github.com/Physical-Intelligence/openpi) through openpi, and [OpenVLA](https://openvla.github.io/).
 
-All in all this was a really fun experiment. I learned a ton: WiLoR, DINO, Gaussian splat training, and a lot about where checks belong. I hope this helps shed some light on turning egocentric into wrist videos, and hopefully you don't make the same mistakes I did.
+All in all this was a really fun experiment. I learned a ton: [WiLoR](https://github.com/rolpotamias/WiLoR), [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), [Gaussian splat training](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/), and a lot about where checks belong. I hope this helps shed some light on turning egocentric into wrist videos, and hopefully you don't make the same mistakes I did.
 
 *Thank you to Harry Freeman, author of the WARPED paper for answering a lot of my noob questions.*
 
