@@ -288,17 +288,15 @@ That also means the number I originally set out to measure doesn't exist. I'd pl
 recovery = (A error - B error) / (A error - C error)
 ```
 
-The denominator is zero. There was never a gap for the render to close. So I'm not reporting a recovery fraction, and I'm fine with that, because it's the honest answer.
+So the fraction has nothing to divide by. The real camera never beat the head camera, so there was no gap for the render to close. I'm not reporting a recovery number, because there isn't one.
 
-**Does the rendered wrist hurt?** A little, probably, but I can't call it. Four seeds out of five say yes and the mean is −0.11 mm, which misses my rule on the sign count.
+**Does the rendered wrist hurt?** Probably a little, but not enough for me to say so. Four of the five seeds say yes, and the average is 0.11 mm worse, but my rule needs the sign to agree on all but one seed, and this one misses. So it stays "not established".
 
 **Is the real wrist better than the rendered one?** Yes, by 0.14 mm, on every single seed. This is the only established result in the whole experiment. Before you get excited, remember that neither of them beats the head camera alone. It's a real difference between two things that both add nothing.
 
 Why is the render worse? I don't know for sure. My best guess is colour, not geometry. After normalisation, the rendered wrist frames sit much further from the ImageNet statistics my encoder expects than the real wrist frames do, and that was flagged before the runs started. A camera placement problem would look different from this.
 
 **What about the top row?** Every policy ends up level with "repeat my last move". Head camera 3.72, real wrist 3.70, the dumb rule 3.72. The real-wrist policy edges below it on four of five seeds, but only just. My take is that lifting a cube on an empty desk is a very repeatable movement, so a rule that copies the last step is hard to beat. Pouring a cup of coffee or wiping a plate would probably be a different story.
-
-Fun fact: the seeds earned their money on the way. After three seeds, "does the rendered wrist hurt" read −0.20 mm with all three agreeing, and it cleared the threshold twice over. Then seeds four and five came in at −0.02 and +0.06 and the whole thing fell apart. With three seeds I would have published "the render hurts by 0.2 mm."
 
 One thing I didn't vary above is the encoder, and that's because I'd already tested it. Swapping the head-camera encoder from random weights to [R3M](https://arxiv.org/abs/2203.12601), which is pretrained on egocentric video, cut error by about 1 mm in an earlier run, from 6.56 to 5.61 mm. That's ten times the spread between any of the cameras, so every policy above uses R3M.
 
@@ -308,11 +306,11 @@ In total, training cost me about $18 and 24 hours of rented GPU time.
 
 After two weeks of building, I know how to transform egocentric to wrist views, but there's much more work to be done to translate this to be useful for a policy. Here's what I'd do differently in the future:
 
-1. **Run several seeds and train to convergence before comparing anything.** With one seed you can't tell an effect from luck. Five seeds and a cosine learning rate got my noise floor down to 0.07 mm, which is small enough to trust a 0.1 mm difference. Get that floor first, then compare cameras.
+1. **Measure task success instead of millimeters.** A robot that picks up the cube 8 times out of 10 is a result anyone can read. A policy that's 0.14 mm better at guessing the next half second is not. WARPED only reports task success, and now I understand why.
 
-2. **Measure task success instead of millimeters.** A robot that picks up the cube 8 times out of 10 is a result anyone can read. A policy that's 0.14 mm better at guessing the next half second is not. WARPED only reports task success, and now I understand why.
+2. **Pick a task that actually needs a wrist view.** Lifting a cube on an empty desk can be solved from the head camera alone, and the numbers say so. If I want to detect a wrist-view effect, I need a task where losing the wrist view actually hurts. Something with occlusion, like reaching into a drawer.
 
-3. **Pick a task that actually needs a wrist view.** Lifting a cube on an empty desk can be solved from the head camera alone, and the numbers say so. If I want to detect a wrist-view effect, I need a task where losing the wrist view actually hurts. Something with occlusion, like reaching into a drawer.
+3. **Run several seeds and train to convergence before comparing anything.** With one seed you can't tell an effect from luck. Five seeds and a cosine learning rate got my noise floor down to 0.07 mm, which is small enough to trust a 0.1 mm difference. Get that floor first, then compare cameras.
 
 4. **Fix the camera geometry before running anything.** My real camera sat on my bicep at 45 cm because my Arducam wasn't wide angle. The rendered one sat at the standard 25 cm. So B against C was partly comparing two camera positions, not two ways of making an image. A fisheye lens at the right distance would remove that entirely. Something like [this](https://www.amazon.com/Arducam-Computer-Fisheye-Microphone-Windows/dp/B07ZS75KZR) would probably work.
 
