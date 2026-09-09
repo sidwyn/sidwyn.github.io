@@ -290,7 +290,7 @@ recovery = (A error - B error) / (A error - C error)
 
 Thus the fraction has nothing to divide by. The real camera never beat the head camera, so there was no gap for the render to close. I'm not reporting a recovery number, because there isn't one.
 
-**Does the rendered wrist hurt?** Probably a little, but not enough for me to say so. Four of the five seeds say yes, and the average is 0.11 mm worse. However, my rule needs the sign to agree on all but one seed, and this one misses. So it stays "not established".
+**Does the rendered wrist hurt?** Probably a little, but not enough for me to say so. Four of the five seeds (not all) say yes, and the average is 0.11 mm worse. 
 
 **Is the real wrist better than the rendered one?** Yes, by 0.14 mm, on every single seed. This is the only established result in the whole experiment. However, before you get excited, remember that neither of them beats the head camera alone.
 
@@ -298,7 +298,7 @@ Why is the render worse? I don't know for sure. My best guess is colour, not geo
 
 **What about the top row?** Every policy ends up level with "repeat my last move". Head camera 3.72, real wrist 3.70, the dumb rule 3.72. The real-wrist policy edges below it on four of five seeds, but only just. My take is that lifting a cube on an empty desk is a very repeatable movement, so a rule that copies the last step is hard to beat. Pouring a cup of coffee or wiping a plate would probably be a different story.
 
-One thing I didn't vary above is the encoder, and that's because I'd already tested it. Swapping the head-camera encoder from random weights to [R3M](https://arxiv.org/abs/2203.12601), which is pretrained on egocentric video, cut error by about 1 mm in an earlier run, from 6.56 to 5.61 mm. That's ten times the spread between any of the cameras, so every policy above uses R3M.
+One thing I didn't vary above is the encoder, and that's because I'd already tested it. Swapping the head-camera encoder from random weights to [R3M](https://arxiv.org/abs/2203.12601), which is pretrained on egocentric video, cut error by about 1 mm in an earlier run, from 6.56 to 5.61 mm. That's ten times the spread between any of the cameras, so every policy above uses R3M. I would definitely try a different encoder next time as well (see lesson #5 below.)
 
 In total, training cost me about $18 and 24 hours of rented GPU time.
 
