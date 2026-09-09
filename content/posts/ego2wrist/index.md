@@ -269,7 +269,7 @@ My first run trained each policy for 2,000 steps, once each:
 
 The real wrist camera improved error by **0.11 mm**. The rendered wrist made it **0.09 mm worse**. That looked like a finding, until I looked at how much a single run bounced from one checkpoint to the next: about 1 mm, ten times the differences I was trying to read. Every curve was also still falling when I stopped it. So I couldn't say whether the ordering was real or luck.
 
-So I ran it again, properly this time. Ten thousand steps instead of two thousand. A learning rate that decays to zero instead of staying flat. And five random seeds per policy instead of one, so I could see how much the number moves when nothing changes but the dice. Fifteen training runs on five rented 4090s, about four hours wall clock, $14.47. I wrote the decision rule down before the first pod started: a difference counts only if its mean clears twice its standard error and the sign agrees on at least four of the five seeds.
+So I ran it again, properly this time. Ten thousand steps instead of two thousand, a learning rate that decays to zero instead of staying flat, and five random seeds per policy instead of one, so I could see how much the number moves when nothing changes but the dice. Fifteen training runs across five rented 4090s took about four hours of wall clock and cost $14.47. I wrote the decision rule down before the first pod started: a difference counts only if its mean clears twice its standard error and the sign agrees on at least four of the five seeds.
 
 | Policy                        | s1   | s2   | s3   | s4   | s5   | Mean        | sd   |
 | ----------------------------- | ---- | ---- | ---- | ---- | ---- | ----------- | ---- |
