@@ -22,7 +22,7 @@ However, the underlying notion is still the same: useful data is scarce and impo
 
 As I read more about egocentric videos and policy training, I learned that **wristview videos provide a secondary viewpoint to help train policies better** ([Hsu et al., 2022](https://arxiv.org/abs/2203.12677)). I started thinking: could we provide more useful data to policies without having to redo much work?
 
-Scouring the internet led me to the [WARPED paper](https://arxiv.org/html/2604.10809v1). It wasn't the only route. [Kim, Wu and Finn](https://arxiv.org/abs/2307.05959) strapped a real camera to a human forearm and masked out the hand, and [WristWorld](https://arxiv.org/abs/2510.07313) generates wrist views from third-person robot footage with a video world model. WARPED was the one that started from a head camera, which is the camera I could actually wear. Though the paper's not been accepted yet, it did seem very promising, and I was keen on replicating parts with a minimal setup. This would also come with a few differences: I'd be using cheaper cameras (Arducams and my iPhone), a much smaller desk, and no roboarm.
+Scouring the internet led me to the [WARPED paper](https://arxiv.org/html/2604.10809v1). Though the paper's not been accepted yet, it did seem very promising, and I was keen on replicating parts with a minimal setup. This would also come with a few differences: I'd be using cheaper cameras (Arducams and my iPhone), a much smaller desk, and no roboarm.
 
 **So the question I set out to answer was a build question: can I take video from a camera on my head, and produce video from a camera that was never on my wrist?**
 
@@ -133,7 +133,7 @@ Instead of widening the lens, I moved the camera back onto my bicep and let the 
 
 This came back to bite me in the experiment. The real camera sat at 45 cm, while the rendered one sat at the 25 cm standoff that UMI uses. 
 
-So when I compared the two later on, I was partly comparing two camera positions rather than two ways of making an image. The renders were fine. What it cost me was a much muddier comparison than it needed to be.
+So when I compared the two later on, I was partly comparing two camera positions rather than two ways of making an image. The renders weren't useless, but this made the comparison much muddier than it needed to be.
 
 ### 2. Don't become a message bus between yourself and your AI agent.
 
