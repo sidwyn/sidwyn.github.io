@@ -133,7 +133,7 @@ Instead of widening the lens, I moved the camera back onto my bicep and let the 
 
 This came back to bite me in the experiment. The real camera sat at 45 cm, while the rendered one sat at the 25 cm standoff that UMI uses. 
 
-So when I compared the two later on, I was partly comparing two camera positions rather than two ways of making an image. The renders weren't useless, but this made the comparison much muddier than it needed to be.
+So when I compared the two later on, I was partly comparing two camera positions rather than two ways of making an image. The renders were fine. What it cost me was a much muddier comparison than it needed to be.
 
 ### 2. Don't become a message bus between yourself and your AI agent.
 
