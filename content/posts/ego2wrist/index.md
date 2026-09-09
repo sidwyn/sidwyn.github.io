@@ -9,7 +9,7 @@ cover:
   alt: "Left: egocentric camera. Right: generated wrist video."
   relative: true
 ShowToc: true
-TocOpen: false
+TocOpen: true
 ---
 
 I've been a software engineer for most of my career.
