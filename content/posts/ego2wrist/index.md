@@ -24,7 +24,7 @@ As I read more about egocentric videos and policy training, I learned that **wri
 
 Scouring the internet led me to the [WARPED paper](https://arxiv.org/html/2604.10809v1). Though the paper's not been accepted yet, it did seem very promising, and I was keen on replicating parts with a minimal setup. This would also come with a few differences: I'd be using cheaper cameras (Arducams and my iPhone), a much smaller desk, and no roboarm.
 
-**So the question I set out to answer was a build question: can I take video from a camera on my head, and produce video from a camera that was never on my wrist?**
+**So the question I set out to answer: can I take video from a camera on my head, and produce video from a camera that was never on my wrist?**
 
 <video preload="metadata" src="clip_side_by_side_demo3.mp4" controls muted playsinline width="100%"></video>
 _Left: egocentric camera. Right: generated wrist video._
