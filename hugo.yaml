@@ -2,6 +2,13 @@ baseURL: "https://sidwyn.com/"
 title: Sidwyn's Homepage
 theme: PaperMod
 
+# Search needs the JSON index that PaperMod's layouts/index.json builds.
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
 markup:
   goldmark:
     renderer:
