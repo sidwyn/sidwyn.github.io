@@ -292,7 +292,7 @@ Thus the fraction has nothing to divide by. The real camera never beat the head 
 
 **Does the rendered wrist hurt?** Probably a little, but not enough for me to say so. Four of the five seeds say yes, and the average is 0.11 mm worse. However, my rule needs the sign to agree on all but one seed, and this one misses. So it stays "not established".
 
-**Is the real wrist better than the rendered one?** Yes, by 0.14 mm, on every single seed. This is the only established result in the whole experiment. However, before you get excited, remember that neither of them beats the head camera alone. It's a real difference between two things that both add nothing.
+**Is the real wrist better than the rendered one?** Yes, by 0.14 mm, on every single seed. This is the only established result in the whole experiment. However, before you get excited, remember that neither of them beats the head camera alone.
 
 Why is the render worse? I don't know for sure. My best guess is colour, not geometry. After normalisation, the rendered wrist frames sit much further from the ImageNet statistics my encoder expects than the real wrist frames do, and that was flagged before the runs started. A camera placement problem would look different from this.
 
